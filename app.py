@@ -51,7 +51,7 @@ async def generate_response():
 
 @app.get("/generate-questions", tags=["Generate Questions"])
 async def generate_questions():
-    return {"message": "Questions generated"}
+    return {"message": ["Question 1", "Question 2", "Question 3", "Question 4"]}
 
 @app.post("/give-feedback", tags=["Give Feedback"])
 async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
