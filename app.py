@@ -46,8 +46,9 @@ async def categorize_question(question: Dict[str, str]):
     
     return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
-@app.get("/generate-response", tags=["Generate Response"])
-async def generate_response():
+@app.post("/generate-response", tags=["Generate Response"])
+async def generate_response(question: Dict[str, str]):
+    # expecting {"question": ""}
     return {"message": "Response generated"}
 
 @app.get("/generate-questions", tags=["Generate Questions"])
