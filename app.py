@@ -1,5 +1,6 @@
 from typing import List, Dict
 
+import random
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.categorize_question import get_category 
@@ -57,7 +58,8 @@ async def generate_questions():
 async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
     # expecting {"questions": [{"question": "", "response": ""}, ...]}
     pairs = responses["questions"]
-    return {"message": "Feedback generated"}
+    is_correct = random.choice([True, False])
+    return {"message": "Feedback generated", "is_correct": is_correct}
 
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
