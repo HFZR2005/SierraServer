@@ -49,7 +49,7 @@ async def categorize_question(question: Dict[str, str]):
 @app.post("/generate-response", tags=["Generate Response"])
 async def generate_response(question: Dict[str, str]):
     # expecting {"question": ""}
-    return {"message": "Response generated"}
+    return {"response": "Response generated"}
 
 @app.get("/generate-questions", tags=["Generate Questions"])
 async def generate_questions():
