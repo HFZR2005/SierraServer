@@ -59,3 +59,10 @@ async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
     pairs = responses["questions"]
     return {"message": "Feedback generated"}
 
+
+@app.get("/generate-scenario", tags=["Generate Scenario"])
+async def generate_scenario():
+    return {"message": "Scenario generated"}
+
+
+
