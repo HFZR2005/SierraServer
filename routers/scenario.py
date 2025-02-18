@@ -2,6 +2,7 @@ import os
 from mistralai import Mistral
 import os
 from dotenv import load_dotenv
+import random 
 
 load_dotenv()
 
@@ -11,7 +12,7 @@ model = "mistral-large-latest"
 
 client = Mistral(api_key=api_key)
 
-prompt_content = """Your task is to generate scenarios for an investigative interviewer to imagine themselves within. The interviewer primarily works with abused children (including sexual), up to age 18. Please generate a scenario of the form: Scenario: [Scenario] Age: [age]. The scenario should be short, include no dialogue and only have a few details. The setting is a court, so the scenario should just be some brief information about evidence. Also include the name and age of the child as separate fields.
+prompt_content = """Your task is to generate scenarios for an investigative interviewer to imagine themselves within. The interviewer primarily works with abused children (including sexual), up to age 18. Please generate a scenario of the form: Scenario: [Scenario] Age: [age]. The scenario should be short, include no dialogue and only have a few details. The setting is a court, so the scenario should just be some brief information about evidence. Also include the name and age of the child as separate fields. They cannot be named Lucas.
 
 Here is an example: 
 
@@ -26,7 +27,7 @@ def parse_text_to_dict(text):
 
     for line in lines:
         if ": " in line:
-            key, value = line.split(": ", 1)  # Split only on the first occurrence
+            key, value = line.split(": ", 1)  
             data[key.strip()] = value.strip()
 
     return data
