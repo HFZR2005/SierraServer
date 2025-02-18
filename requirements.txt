@@ -25,17 +25,14 @@ jsonpointer==3.0.0
 langchain==0.3.19
 langchain-community==0.3.17
 langchain-core==0.3.35
-langchain-ollama==0.2.3
 langchain-text-splitters==0.3.6
 langsmith==0.3.8
-llama_cpp_python==0.3.7
 MarkupSafe==3.0.2
 marshmallow==3.26.1
 mistralai==1.5.0
 multidict==6.1.0
 mypy-extensions==1.0.0
 numpy<2,>=1.26.0
-ollama==0.4.7
 orjson==3.10.15
 packaging==24.2
 propcache==0.2.1
