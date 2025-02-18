@@ -4,7 +4,7 @@ import random
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routers.categorize_question import get_category 
-
+from routers.scenario import create_scenario
 app = FastAPI()
 
 origins = ["*"]
@@ -65,7 +65,7 @@ async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
 async def generate_scenario():
-    return {"message": "Scenario generated"}
+    return create_scenario()
 
 @app.get("/generate-question", tags=["Generate Question"])
 async def generate_question():
