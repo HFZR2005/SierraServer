@@ -30,6 +30,7 @@ redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=Tr
 
 
 class ChatRequest(BaseModel):
+    scenario: str
     message: str
 
 
@@ -97,15 +98,14 @@ async def generate_question():
     return {"question": "the question", "category": "the category"}
 
 
-scenario = create_scenario()
-scenario = scenario["Scenario"]
 
 @app.post("/chat", tags=["Chat"])
 async def chat(request: Request, message: ChatRequest):
     session_id = request.cookies.get("session_id")
     if not session_id:
         return {"message": "access denied"}
-
+    
+    scenario = message.scenario
     history = redis_client.get(session_id)
     response = get_child_response(scenario, history, message.message)
 
