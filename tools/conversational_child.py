@@ -30,6 +30,7 @@ prompt_template = PromptTemplate.from_template(
 
     {prompt_content}
 
+    Please respond to the interviewer as the child in the scenario.
     You respond:
 
     """
