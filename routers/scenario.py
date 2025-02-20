@@ -2,7 +2,6 @@ import os
 from mistralai import Mistral
 import os
 from dotenv import load_dotenv
-import random 
 
 load_dotenv()
 
@@ -33,16 +32,22 @@ def parse_text_to_dict(text):
     return data
 
 def create_scenario():
-    chat_response = client.chat.complete(
-        model= model,
-        messages = [
-            {
-                "role": "user",
-                "content": prompt_content,
-            },
-        ]
-    )
-        
-    text = chat_response.choices[0].message.content
-    return parse_text_to_dict(text)
+    try:
+        chat_response = client.chat.complete(
+            model= model,
+            messages = [
+                {
+                    "role": "user",
+                    "content": prompt_content,
+                },
+            ]
+        )
+            
+        text = chat_response.choices[0].message.content
+        return parse_text_to_dict(text)
+    except Exception as e:
+        print(f"Error calling mistral api: {e}")
+        return "This is an error message, something went wrong :("
+
+
 

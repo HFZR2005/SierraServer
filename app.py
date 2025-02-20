@@ -1,10 +1,15 @@
 from typing import List, Dict
 
 import random
-from fastapi import FastAPI
+import redis
+import uuid
+from fastapi import FastAPI, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from routers.categorize_question import get_category 
 from routers.scenario import create_scenario
+from routers.conversational_child import get_child_response
+from pydantic import BaseModel 
+
 app = FastAPI()
 
 origins = ["*"]
@@ -16,6 +21,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+REDIS_HOST = "localhost"
+REDIS_PORT = 6379
+
+redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+
+
+
+class ChatRequest(BaseModel):
+    message: str
+
+
+
+@app.get("/start-session", tags=["Start Session"])
+async def start_session(response: Response):
+    session_id = str(uuid.uuid4())
+    redis_client.set(session_id, "active", ex=3600)
+    response.set_cookie(key="session_id", value=session_id)
+    return {"message": "access granted", "session_id": session_id}
+
 
 @app.get("/", tags=["Root"])
 async def read_root():
@@ -71,5 +96,22 @@ async def generate_scenario():
 async def generate_question():
     return {"question": "the question", "category": "the category"}
 
+
+scenario = create_scenario()
+scenario = scenario["Scenario"]
+
+@app.post("/chat", tags=["Chat"])
+async def chat(request: Request, message: ChatRequest):
+    session_id = request.cookies.get("session_id")
+    if not session_id:
+        return {"message": "access denied"}
+
+    history = redis_client.get(session_id)
+    response = get_child_response(scenario, history, message.message)
+
+    updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
+    redis_client.set(session_id, updated_history, ex=3600)
+
+    return {"message": response}
 
 
