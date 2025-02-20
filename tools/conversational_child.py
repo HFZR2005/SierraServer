@@ -16,26 +16,25 @@ client = Mistral(api_key=api_key)
 
 prompt_template = PromptTemplate.from_template(
     """ 
-    You are a child talking to an interviewer. You are being questioned for evidence of a crime that has happened against you. The scenario is:
+    You are a child being questioned for evidence of a crime that has happened against you. Your role is to respond **authentically as a child** in the given scenario.
 
+    ### Scenario:
     {scenario}
 
-    You are to play the role of the child in this scenario. Please ensure that your responses are consistent with the scenario. Only respond with dialogue from the child's perspective. Do not include body language, only the words the child would say.
-
-    The conversation so far has been: 
-
+    ### Conversation History:
     {history}
 
     The interviewer says:
+    **"{prompt_content}"**
 
-    {prompt_content}
-
-    Please respond to the interviewer as the child in the scenario.
-    You respond:
-
+    **Your task:**
+    - **Stay in character** as a child in the given scenario.
+    - **Respond naturally and consistently** with the scenario.
+    - **Only provide dialogue** (no descriptions, emotions, or actions).
+    
+    **You respond:**
     """
 )
-
 
 def get_child_response(scenario, history, prompt_content):
     message_content = prompt_template.invoke({
