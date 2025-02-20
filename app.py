@@ -5,9 +5,9 @@ import redis
 import uuid
 from fastapi import FastAPI, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from routers.categorize_question import get_category 
-from routers.scenario import create_scenario
-from routers.conversational_child import get_child_response
+from tools.categorize_question import get_category 
+from tools.scenario import create_scenario
+from tools.conversational_child import get_child_response
 from pydantic import BaseModel 
 
 app = FastAPI()
