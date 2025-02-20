@@ -20,7 +20,7 @@ prompt_template = PromptTemplate.from_template(
 
     {scenario}
 
-    You are to play the role of the child in this scenario. Please ensure that your responses are consistent with the scenario.
+    You are to play the role of the child in this scenario. Please ensure that your responses are consistent with the scenario. Only respond with dialogue from the child's perspective.
 
     The conversation so far has been: 
 
