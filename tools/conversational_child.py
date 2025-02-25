@@ -37,6 +37,18 @@ prompt_template = PromptTemplate.from_template(
 )
 
 def get_child_response(scenario, history, prompt_content):
+    """
+    Generates a chatbot response based on the given scenario, conversation history, and prompt content.
+
+    Args:
+        scenario (str): The specific context or scenario for the chatbot.
+        history (list): A list containing previous messages in the conversation.
+        prompt_content (str): The main content or user query for generating a response.
+
+    Returns:
+        str: The chatbot's response text or an error message if the API call fails.
+    """    
+
     message_content = prompt_template.invoke({
         "scenario":scenario, "history":history, "prompt_content":prompt_content
     }).to_string()

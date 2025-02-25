@@ -2,6 +2,7 @@ import os
 from mistralai import Mistral
 import os
 from dotenv import load_dotenv
+from typing import Dict
 
 load_dotenv()
 
@@ -20,7 +21,17 @@ Scenario: A six-year-old girl named Emily is brought to testify in court regardi
 Name: Emily
 Age: 6 """
 
-def parse_text_to_dict(text):
+def parse_text_to_dict(text) -> Dict[str, str]:
+    """
+    Helper function to parse text into a dictionary. This is used to extract Scenario, Name, and Age from the generated text.
+
+    Args:
+        text (str): The text to parse.
+
+    Returns:
+        dict: A dictionary containing the parsed key-value
+    """
+
     lines = text.strip().split("\n")
     data = {}
 
@@ -31,7 +42,14 @@ def parse_text_to_dict(text):
 
     return data
 
-def create_scenario():
+def create_scenario() -> Dict[str, str]:
+    """
+    Generates a scenario using the Mistral API.
+
+    Returns:
+        dict: A dictionary containing the generated scenario.
+    """
+
     try:
         chat_response = client.chat.complete(
             model= model,

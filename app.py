@@ -1,3 +1,4 @@
+
 from typing import List, Dict
 
 import random
@@ -27,91 +28,140 @@ REDIS_PORT = 6379
 
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
-
-
 class ChatRequest(BaseModel):
+    """
+    Represents a chat request containing a scenario and a message.
+    """
     scenario: str
     message: str
 
-
+class Question(BaseModel):
+    """
+    Represents a question to be categorized.
+    """
+    question: str 
 
 @app.get("/start-session", tags=["Start Session"])
-async def start_session(response: Response):
+async def start_session(response: Response) -> Dict[str, str]:
+    """
+    Starts a new user session and stores it in Redis.
+
+    Args:
+        response (Response): The response object to set the session cookie.
+
+    Returns:
+        dict: A message indicating access granted along with the session ID.
+    """
     session_id = str(uuid.uuid4())
     redis_client.set(session_id, "active", ex=3600)
     response.set_cookie(key="session_id", value=session_id)
     return {"message": "access granted", "session_id": session_id}
 
-
 @app.get("/", tags=["Root"])
-async def read_root():
+async def read_root() -> Dict[str, str]:
+    """
+    Root endpoint for checking if the server is running.
+    
+    Returns:
+        dict: A simple message indicating the server is active.
+    """
     return {"message": "THIS IS THE SIERRA PROJECT SERVER"}
 
-'''
-endpoints: 
-/categorize-question (accepts a question in body with {question: ""}
-
-/generate-response (for testing mode)
-
-/generate-questions 
-    (for practice mode - returns 4 question / stage 
-    pairs which the user must reorder to the correct order as per protocol)
-
-/give-feedback: 
-    accepts a list of question, response pairs, 
-    returns feedback on how effective the interviewer was at 
-    conforming to Q types and staying within context
-'''
-
-
 @app.post("/categorize-question", tags=["Categorize Question"])
-async def categorize_question(question: Dict[str, str]):
-    # expecting {"question": ""}
-    q = question["question"]
+async def categorize_question(question: Question) -> Dict[str, str]:
+    """
+    Categorizes a given question using the `get_category` function.
+    
+    Args:
+        question (Question): The question to be categorized.
+    
+    Returns:
+        dict: A message with the assigned category.
+    """
+    q = question.question
     category = get_category(q)
     
     return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
-@app.post("/generate-response", tags=["Generate Response"])
-async def generate_response(question: Dict[str, str]):
-    # expecting {"question": ""}
-    return {"response": "Response generated"}
-
 @app.get("/generate-questions", tags=["Generate Questions"])
-async def generate_questions():
+async def generate_questions() -> Dict[str, List[str]]:
+    """
+    Generates a list of sample questions.
+    
+    Returns:
+        dict: A list of sample questions.
+    """
     return {"message": ["Question 1", "Question 2", "Question 3", "Question 4"]}
 
 @app.post("/give-feedback", tags=["Give Feedback"])
 async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
-    # expecting {"questions": [{"question": "", "response": ""}, ...]}
+    """
+    Provides feedback on user responses to questions.
+    
+    Args:
+        responses (dict): A dictionary containing a list of question-response pairs.
+    
+    Returns:
+        dict: A message with feedback and a randomly assigned correctness status.
+    """
     pairs = responses["questions"]
     is_correct = random.choice([True, False])
     return {"message": "Feedback generated", "is_correct": is_correct}
 
-
 @app.get("/generate-scenario", tags=["Generate Scenario"])
-async def generate_scenario():
+async def generate_scenario() -> Dict[str, str]:
+    """
+    Generates a scenario using the `create_scenario` function.
+    
+    Returns:
+        dict: The generated scenario.
+    """
     return create_scenario()
 
 @app.get("/generate-question", tags=["Generate Question"])
 async def generate_question():
+    """
+    Generates a question and its category.
+    
+    Returns:
+        dict: A generated question and its category.
+    """
     return {"question": "the question", "category": "the category"}
 
-
+# Exception for when there is no session_id
+class NoSession(Exception):
+    """
+    Exception raised when no session_id is found.
+    """
+    def __init__(self):
+        super().__init__("No session_id found")
 
 @app.post("/chat", tags=["Chat"])
-async def chat(request: Request, message: ChatRequest):
-    session_id = request.cookies.get("session_id")
-    if not session_id:
-        return {"message": "access denied"}
+async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
+    """
+    Handles user chat requests and interacts with the chatbot. Requires a session_id cookie. Sessions are valid for 1 hour.
     
-    scenario = message.scenario
-    history = redis_client.get(session_id)
-    response = get_child_response(scenario, history, message.message)
+    Args:
+        request (Request): The HTTP request object to extract cookies.
+        message (ChatRequest): The chat request containing a scenario and user message.
+    
+    Returns:
+        dict: A response message from the chatbot.
+    """
+    try:
+        session_id = request.cookies.get("session_id")
+        if not session_id:
+            raise NoSession 
 
-    updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
-    redis_client.set(session_id, updated_history, ex=3600)
+        scenario = message.scenario
+        history = redis_client.get(session_id)
+        response = get_child_response(scenario, history, message.message)
 
-    return {"message": response}
+        updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
+        redis_client.set(session_id, updated_history, ex=3600)
+
+        return {"message": response}
+    except Exception as e:
+        return {"message": f"Error: {e.__str__()}"}
 
 
