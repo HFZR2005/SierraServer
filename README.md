@@ -7,7 +7,7 @@
 ## Getting Started
 ### Prerequisites
 Ensure you have the following installed:
-- Python 3.8+
+- Python 3.9+
 - pip
 - Bash (for running the start script)
 
@@ -17,6 +17,18 @@ Clone the repository and install dependencies:
 git clone git@github.com:HFZR2005/SierraServer.git
 cd SierraServer
 pip install -r requirements.txt
+```
+
+Install PyTorch manually (depending on CPU or GPU):
+
+If you have a GPU:
+```bash
+pip install torch
+```
+
+If you don't have a GPU:
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cpu
 ```
 
 ### Running the Application
@@ -64,4 +76,3 @@ python main.py
 
 
 
-Thank you for contributing!
