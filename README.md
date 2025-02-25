@@ -45,6 +45,12 @@ To make the server run in the foreground, just run the main.py file using:
 python main.py
 ```
 
+Also make sure that your Mistral API key is available in the environment variable `MISTRAL_API_KEY` before running the server. Do this by opening the .env file and adding the key there. On UNIX systems, you can do this by running the following command:
+
+```bash
+echo "MISTRAL_API_KEY=your_api_key_here" > .env
+```
+
 ## Project Structure
 ```
 .
