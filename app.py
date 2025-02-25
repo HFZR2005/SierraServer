@@ -41,6 +41,15 @@ class Question(BaseModel):
     """
     question: str 
 
+
+class QuestionResponse(BaseModel):
+    """
+    Represents a question-response pair.
+    """
+    question: str
+    response: str
+
+
 @app.get("/start-session", tags=["Start Session"])
 async def start_session(response: Response) -> Dict[str, str]:
     """
@@ -94,7 +103,7 @@ async def generate_questions() -> Dict[str, List[str]]:
     return {"message": ["Question 1", "Question 2", "Question 3", "Question 4"]}
 
 @app.post("/give-feedback", tags=["Give Feedback"])
-async def give_feedback(responses: Dict[str, List[Dict[str, str]]]):
+async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, bool]:
     """
     Provides feedback on user responses to questions.
     
