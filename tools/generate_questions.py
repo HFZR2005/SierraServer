@@ -8,7 +8,7 @@ model = "mistral-large-latest"
 
 client = Mistral(api_key=api_key)
 
-def get_question_category():
+def get_question_category() -> str:
     return random.choice([
     "Open-ended (A question that encourages a open answer and cannot be answered by yes or no.)", 
     "Directive (A 'Who, What, When, Where, or How' question on a specific topic. )", 
@@ -16,7 +16,7 @@ def get_question_category():
     "Suggestive (Questions with presuppositions, implied correct answers, information that the interviewee did not reveal themselves.)"
     ])
 
-def generate_category_question(category):
+def generate_category_question(category: str) -> str:
     try:
         chat_response = client.chat.complete(
             model= model,
