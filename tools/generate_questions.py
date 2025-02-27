@@ -22,13 +22,9 @@ def generate_category_question(category: str) -> str:
             model= model,
             messages = [
                 {
-                    "role": "system",
-                    "content": 
-                    "You are the police interviewing a child about their abuse. Give only questions.",
-
                     "role": "user",
                     "content":
-                    "Give me a " + category + " question. "
+                    "You are the police interviewing a child about their abuse. Give only questions. Give me a " + category + " question. "
                 },
             ]
         )
