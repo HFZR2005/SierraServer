@@ -169,4 +169,9 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
     except Exception as e:
         return {"message": f"Error: {e.__str__()}"}
 
+@app.post("/llm-categorize-question")
+async def llm_categorize_question(question: Question):
 
+    
+
+    return {"message": question.question}
