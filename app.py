@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from tools.categorize_question import get_category 
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
+from tools.generate_questions import generate_category_question, get_question_category
 from pydantic import BaseModel 
 
 app = FastAPI()
@@ -92,16 +93,6 @@ async def categorize_question(question: Question) -> Dict[str, str]:
     
     return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
-@app.get("/generate-questions", tags=["Generate Questions"])
-async def generate_questions() -> Dict[str, List[str]]:
-    """
-    Generates a list of sample questions.
-    
-    Returns:
-        dict: A list of sample questions.
-    """
-    return {"message": ["Question 1", "Question 2", "Question 3", "Question 4"]}
-
 @app.post("/give-feedback", tags=["Give Feedback"])
 async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, bool]:
     """
@@ -128,14 +119,18 @@ async def generate_scenario() -> Dict[str, str]:
     return create_scenario()
 
 @app.get("/generate-question", tags=["Generate Question"])
-async def generate_question():
+async def generate_question() -> Dict[str, str]:
     """
     Generates a question and its category.
     
     Returns:
         dict: A generated question and its category.
     """
-    return {"question": "the question", "category": "the category"}
+
+    category = get_question_category()
+    question = generate_category_question(category)
+
+    return {"question": question, "category": category}
 
 # Exception for when there is no session_id
 class NoSession(Exception):
