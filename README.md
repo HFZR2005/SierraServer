@@ -68,17 +68,25 @@ echo "MISTRAL_API_KEY=your_api_key_here" > .env
 
 ## Contributing
 ### Adding a New Feature
-1. **Create a New Tool**:
+1. **Create a new branch**:
+   - Create a new branch with a descriptive name e.g. feature/toolname
+   - Make your changes in this branch.
+
+2. **Create a New Tool**:
    - Add a new Python file inside the `tools/` directory.
    - Implement the required functionality.
 
-2. **Register the Tool in `app.py`**:
+3. **Register the Tool in `app.py`**:
    - Import the tool inside `app.py`.
    - Add an appropriate FastAPI endpoint.
 
-3. **Test Your Changes**:
+4. **Test Your Changes**:
    - Ensure the application runs without errors.
    - Write tests if applicable.
+
+5. **Create a Pull Request**:
+    - Push your changes to the remote repository.
+    - Create a pull request on GitHub.
 
 
 
