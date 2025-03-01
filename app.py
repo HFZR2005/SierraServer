@@ -128,7 +128,6 @@ async def generate_question() -> Dict[str, str]:
     """
 
     category = get_question_category()
-    category = category.split(" ", 1)
     question = generate_category_question(category)
     category = category.split(" ", 1)[0]
 
