@@ -12,7 +12,7 @@ def get_question_category() -> str:
     return random.choice([
     "Open-ended (A question that encourages a open answer and cannot be answered by yes or no.)", 
     "Directive (A 'Who, What, When, Where, or How' question on a specific topic. )", 
-    "Option Posing (A multiple choice question (this also includes yes/no questions) where the answer is part of the question but is not implied.)", 
+    "Option-Posing (A multiple choice question (this also includes yes/no questions) where the answer is part of the question but is not implied.)", 
     "Suggestive (Questions with presuppositions, implied correct answers, information that the interviewee did not reveal themselves.)"
     ])
 
@@ -25,7 +25,7 @@ def generate_category_question(category: str) -> str:
                     "role": "user",
                     "content":
                     "You are the police interviewing a child about their abuse. Give only questions. Give me a " + category + " question. "
-                },
+                }
             ]
         )
 
