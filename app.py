@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from tools.categorize_question import get_category 
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
+from tools.classifiers.classifier import get_question_type
 from tools.generate_questions import generate_category_question, get_question_category
 from pydantic import BaseModel 
 
@@ -181,3 +182,12 @@ async def llm_categorize_question(question: Question):
 async def generate_test_feedback():
 
     return {"q_type": "T", "q_stage" : 1, "context_switch": False}
+
+
+@app.post("/q-type-categroize", tags=["Get Question Type"])
+async def q_type_categorize(question: Question):
+    """ 
+    Returns:
+        tuple: Question type and the confidence level of the classifier.
+    """
+    return get_question_type(question.question)
