@@ -5,39 +5,58 @@ from dotenv import load_dotenv
 from typing import Dict
 from langchain_core.prompts import PromptTemplate
 
-load_dotenv()
+from typing import List
+from numpy import float64 
 
-api_key = os.getenv("MISTRAL_API_KEY")
+from scipy.spatial import distance 
+from sentence_transformers import SentenceTransformer
 
-model = "mistral-large-latest"
-
-client = Mistral(api_key=api_key)
-
-
-prompt_template = PromptTemplate.from_template(
-    """ 
-    You are a coach helping investigative interviewers train and perfect their question asking technique. Your goal is to ensure the practitioner is asking questions according to the NICHD protocol. This protocol states that an interview must be conducted in stages:
-
-    1. Introduction - The interviewer introduces themselves, explains the ground rules, and clarifies the child's task
-    2. Rapport Building - The interviewer creates a supportive environment for the child
-    3. Transition Phase - The interviewer uses prompts to identify the events under investigation without being suggestive
-    4. Substantive Phase - The interviewer asks questions about the events 
-
-    The protocol avoids topics that could lead to fantasy or suggestibility, such as discussing movies, imaginary friends, or playing with toys. 
-
-    Additionally, the questions should not jump between contexts, the flow of conversation should be natural. This is another factor you should include in your feedback. Below are a list of questions that the interviewer has asked for the stage {current_stage} stage of the interview.
-    
-    ### Question-Response Pairs:
-    {scenario}
+THRESHOLD = 0.85
+sentence_model = SentenceTransformer('all-MiniLM-L6-v2')
 
 
-    **Your task:**
-    - **Stay in character** as the coach providing feedback.
-    - **Respond naturally and consistently** with the scenario.
-    - **Only provide dialogue** (no descriptions, emotions, or actions).
-    
-    **You respond:**
+class InvalidQAQError(Exception):
     """
-)
+    Exception for when the QAQ list is not of length 3.
+    """
+    # message for the exception 
+
+    def __init__(self, message):
+        super().__init__(message)
+
+
+def calculate_similarity(QAQ: List[str]) -> float64:
+    if len(QAQ) == 3:
+        q1, a, q2 = QAQ
+        q1_embedding = sentence_model.encode(q1)
+        q2_embedding = sentence_model.encode(q2)
+        a_embedding = sentence_model.encode(a)
+
+
+        # calculate score between q2 and q1 and if its too small, q2 and a 
+        score = max(1, (1 - distance.cosine(q1_embedding, q2_embedding)) / THRESHOLD)
+        if score < 0.2:
+            score = max(1, (1 - distance.cosine(a_embedding, q2_embedding)) / THRESHOLD)
+        return float64(score)
+    else:
+        raise InvalidQAQError("QAQ list must be of length 3")
+
+
+def calculate_score(QResponseList: List[str]) -> float64:
+    if len(QResponseList) < 3:
+        raise InvalidQAQError("QAQ list must be of length 3")
+    else: 
+        total = 0
+        count = 0
+
+        for i in range(2, len(QResponseList)):
+            QAQ = [QResponseList[i-2], QResponseList[i-1], QResponseList[i]]
+            score = calculate_similarity(QAQ)
+            total += score 
+            count += 1
+        
+        mean = total/count 
+        return float64(mean) 
+
 
 
