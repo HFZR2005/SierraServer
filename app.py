@@ -81,21 +81,6 @@ async def read_root() -> Dict[str, str]:
     """
     return {"message": "THIS IS THE SIERRA PROJECT SERVER"}
 
-@app.post("/categorize-question", tags=["Categorize Question"])
-async def categorize_question(question: Question) -> Dict[str, str]:
-    """
-    Categorizes a given question using the `get_category` function.
-    
-    Args:
-        question (Question): The question to be categorized.
-    
-    Returns:
-        dict: A message with the assigned category.
-    """
-    q = question.question
-    category = get_category(q)
-    
-    return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
 @app.post("/end-stage-feedback", tags=["Give End-Stage Feedback"])
 async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, float]:
