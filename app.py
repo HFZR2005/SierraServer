@@ -1,5 +1,5 @@
 
-from typing import List, Dict
+from typing import List, Dict, Union
 
 import random
 import redis
@@ -95,7 +95,7 @@ async def categorize_question(question: Question) -> Dict[str, str]:
     return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
 @app.post("/give-feedback", tags=["Give Feedback"])
-async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, bool]:
+async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, Union[str, bool]]:
     """
     Provides feedback on user responses to questions.
     
