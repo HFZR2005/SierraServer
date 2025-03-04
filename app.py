@@ -184,10 +184,13 @@ async def generate_test_feedback():
     return {"q_type": "T", "q_stage" : 1, "context_switch": False}
 
 
-@app.post("/q-type-categroize", tags=["Get Question Type"])
+@app.post("/q-type-categorize", tags=["Get Question Type"])
 async def q_type_categorize(question: Question):
     """ 
     Returns:
         tuple: Question type and the confidence level of the classifier.
     """
-    return get_question_type(question.question)
+    q_type, confidence = get_question_type(question.question)
+    return {"question_type": q_type, "confidence": confidence}
+
+
