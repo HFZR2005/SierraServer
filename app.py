@@ -10,7 +10,7 @@ from tools.categorize_question import get_category
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
 from tools.classifiers.classifier import get_question_type
-from tools.generate_questions import generate_category_question, get_question_category
+from tools.generate_questions import LLM_generate_question, get_question_category
 from pydantic import BaseModel 
 
 app = FastAPI()
@@ -120,7 +120,7 @@ async def generate_scenario() -> Dict[str, str]:
     return create_scenario()
 
 @app.get("/generate-question", tags=["Generate Question"])
-async def generate_question() -> Dict[str, str]:
+async def generate_question() -> Dict[str, Union[str]]:
     """
     Generates a question and its category.
     
@@ -129,7 +129,7 @@ async def generate_question() -> Dict[str, str]:
     """
 
     category = get_question_category()
-    question = generate_category_question(category)
+    question = LLM_generate_question(category)
     category = category.split(" ", 1)[0]
 
     return {"question": question, "category": category}
@@ -179,14 +179,30 @@ async def llm_categorize_question(question: Question):
 
 
 @app.post("/testing-feedback", tags=["Testing Feedback"])
-async def generate_test_feedback():
+async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, Union[str, int, bool]]: 
+    """
+    Generates feedback on questions asked by the user in the testing section. Includes whether
+    the question is the correct type, the correct stage, and that there has been no context jump.
+
+    Args:
+        messages: a triple containing question, response, question
+
+    Returns:
+        dict: Question type, stage and whether a switch in context has been detected.
+    """
 
     return {"q_type": "T", "q_stage" : 1, "context_switch": False}
 
 
 @app.post("/q-type-categorize", tags=["Get Question Type"])
-async def q_type_categorize(question: Question):
+async def q_type_categorize(question: Question) -> Dict[str, Union[str, float]]:
     """ 
+    Categorises a question into one of the 4 categories:
+        Open-Ended, Directive, Option-Posing, Suggestive
+
+    Args: 
+        question: Question to be classified.
+
     Returns:
         dict: Question type and the confidence level of the classifier.
     """
