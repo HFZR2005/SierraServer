@@ -188,7 +188,7 @@ async def generate_test_feedback():
 async def q_type_categorize(question: Question):
     """ 
     Returns:
-        tuple: Question type and the confidence level of the classifier.
+        dict: Question type and the confidence level of the classifier.
     """
     q_type, confidence = get_question_type(question.question)
     return {"question_type": q_type, "confidence": confidence}
