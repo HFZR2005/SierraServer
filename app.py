@@ -10,6 +10,7 @@ from tools.categorize_question import get_category
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
 from tools.classifiers.classifier import get_question_type
+from tools.classifiers.LLM_classifier import LLM_get_question_type
 from tools.generate_questions import LLM_generate_question, get_question_category
 from pydantic import BaseModel 
 
@@ -94,7 +95,7 @@ async def categorize_question(question: Question) -> Dict[str, str]:
     
     return {"message": f"Question categorized as {category} THIS IS A TEST"}
 
-@app.post("/give-feedback", tags=["Give Feedback"])
+@app.post("/end-stage-feedback", tags=["Give End-Stage Feedback"])
 async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, Union[str, bool]]:
     """
     Provides feedback on user responses to questions.
@@ -127,7 +128,7 @@ async def generate_question() -> Dict[str, Union[str]]:
     Returns:
         dict: A generated question and its category.
     """
-
+    
     category = get_question_category()
     question = LLM_generate_question(category)
     category = category.split(" ", 1)[0]
@@ -171,14 +172,22 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
         return {"message": f"Error: {e.__str__()}"}
 
 @app.post("/llm-categorize-question")
-async def llm_categorize_question(question: Question):
+async def llm_categorize_question(question: Question) -> Dict[str, str]:
+    """
+    Used as a backup to our finetuned classifier for when it is unsure.
 
-    
+    Args:
+        question: Question to be classified
 
-    return {"message": question.question}
+    Returns:
+        dict: category that question has been determined as
+    """
+
+    q_type = LLM_get_question_type(question.question)
+    return {"question_type": q_type}
 
 
-@app.post("/testing-feedback", tags=["Testing Feedback"])
+@app.post("/live-feedback", tags=["Live Feedback"])
 async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, Union[str, int, bool]]: 
     """
     Generates feedback on questions asked by the user in the testing section. Includes whether
