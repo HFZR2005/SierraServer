@@ -36,7 +36,7 @@ prompt_template = PromptTemplate.from_template(
     """
 )
 
-def get_child_response(scenario, history, prompt_content):
+def get_child_response(scenario: str, history: str, prompt_content: str) -> str:
     """
     Generates a chatbot response based on the given scenario, conversation history, and prompt content.
 
@@ -64,9 +64,11 @@ def get_child_response(scenario, history, prompt_content):
                 },
             ]
         )
-
-        text = chat_response.choices[0].message.content
-        return text
+        
+        if text := chat_response.choices[0].message.content:
+            return text
+        else:
+            return "No response from the chatbot"
     except Exception as e:
         print(f"Error calling mistral api: {e}")
         return "This is an error message, something went wrong :("

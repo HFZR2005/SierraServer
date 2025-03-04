@@ -4,13 +4,15 @@ from typing import List, Dict, Union
 import random
 import redis
 import uuid
+from numpy import float64
 from fastapi import FastAPI, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from tools.categorize_question import get_category 
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
 from tools.classifiers.classifier import get_question_type
-from tools.generate_questions import LLM_generate_question, get_question_category
+from tools.generate_questions import LLM_generate_question, get_question_category 
+from tools.feedback import calculate_score
 from pydantic import BaseModel 
 
 app = FastAPI()
@@ -78,24 +80,8 @@ async def read_root() -> Dict[str, str]:
     """
     return {"message": "THIS IS THE SIERRA PROJECT SERVER"}
 
-@app.post("/categorize-question", tags=["Categorize Question"])
-async def categorize_question(question: Question) -> Dict[str, str]:
-    """
-    Categorizes a given question using the `get_category` function.
-    
-    Args:
-        question (Question): The question to be categorized.
-    
-    Returns:
-        dict: A message with the assigned category.
-    """
-    q = question.question
-    category = get_category(q)
-    
-    return {"message": f"Question categorized as {category} THIS IS A TEST"}
-
 @app.post("/give-feedback", tags=["Give Feedback"])
-async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, Union[str, bool]]:
+async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, float]:
     """
     Provides feedback on user responses to questions.
     
@@ -105,9 +91,17 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
     Returns:
         dict: A message with feedback and a randomly assigned correctness status.
     """
-    pairs = responses["questions"]
-    is_correct = random.choice([True, False])
-    return {"message": "Feedback generated", "is_correct": is_correct}
+    # have QAQAQAQA 
+    QAQList = []
+    for i, pair in enumerate(responses["responses"]):
+        if i == len(responses["responses"]) - 1:
+            QAQList.append(pair.question)
+        else:
+            QAQList.append(pair.question)
+            QAQList.append(pair.response)
+
+    score = float(calculate_score(QAQList))
+    return {"score": score}
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
 async def generate_scenario() -> Dict[str, str]:
@@ -120,7 +114,7 @@ async def generate_scenario() -> Dict[str, str]:
     return create_scenario()
 
 @app.get("/generate-question", tags=["Generate Question"])
-async def generate_question() -> Dict[str, Union[str]]:
+async def generate_question() -> Dict[str, str]:
     """
     Generates a question and its category.
     
@@ -161,6 +155,10 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
 
         scenario = message.scenario
         history = redis_client.get(session_id)
+        if not history:
+            history = ""
+        else:
+            history = history.decode("utf-8")
         response = get_child_response(scenario, history, message.message)
 
         updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
@@ -194,8 +192,8 @@ async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, Union[st
     return {"q_type": "T", "q_stage" : 1, "context_switch": False}
 
 
-@app.post("/q-type-categorize", tags=["Get Question Type"])
-async def q_type_categorize(question: Question) -> Dict[str, Union[str, float]]:
+@app.post("/categorize-question", tags=["Get Question Type"])
+async def q_type_categorize(question: Question):
     """ 
     Categorises a question into one of the 4 categories:
         Open-Ended, Directive, Option-Posing, Suggestive
