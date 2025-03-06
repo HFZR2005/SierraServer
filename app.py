@@ -92,7 +92,7 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
         dict: A message with feedback and a randomly assigned correctness status.
     """
     # have QAQAQAQA 
-    QAQList = []
+    ''' QAQList = []
     for i, pair in enumerate(responses["responses"]):
         if i == len(responses["responses"]) - 1:
             QAQList.append(pair.question)
@@ -102,6 +102,8 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
 
     score = float(calculate_score(QAQList))
     return {"score": score}
+    '''
+    return {"score": 6}
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
 async def generate_scenario() -> Dict[str, str]:
@@ -157,8 +159,8 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
         history = redis_client.get(session_id)
         if not history:
             history = ""
-        else:
-            history = history.decode("utf-8")
+        # else:
+            # history = history.decode("utf-8")
         response = get_child_response(scenario, history, message.message)
 
         updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
