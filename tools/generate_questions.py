@@ -18,7 +18,7 @@ def get_question_category() -> str:
 
     return random.choice([
         "Open-ended (A question that encourages a open answer and cannot be answered by yes or no, they do not start with what, where, when, how, or, why) ", 
-        "Directive (A 'Who, What, When, Where, or How' question on a specific topic. )", 
+        "Directive (A 'Who, What, When, Where, or How' question on a specific topic the question should suggest a short specific answer. )", 
         "Option-Posing (A multiple choice question (this also includes yes/no questions) where the answer is part of the question but is not implied your question should not suggest anything.)", 
         "Suggestive (Questions with presuppositions, implied correct answers, information that the interviewee did not reveal themselves.)"
     ])
@@ -36,7 +36,7 @@ def LLM_generate_question(category: str) -> str:
     """
     try:
         chat_response = client.chat.complete(
-            model= model,
+            model = model,
             messages = [
                 {
                     "role": "user",
@@ -50,6 +50,6 @@ def LLM_generate_question(category: str) -> str:
 
     except Exception as e:
         print(f"Error calling Mistral API: {e}")
-        return "LLM API call error."
+        return "MistralAI API call error."
 
 
