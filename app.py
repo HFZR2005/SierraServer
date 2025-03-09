@@ -7,10 +7,9 @@ import uuid
 from numpy import float64
 from fastapi import FastAPI, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from tools.categorize_question import get_category 
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
-from tools.classifiers.classifier import get_question_type
+from tools.classifiers.classifier import get_question_type, get_stage
 from tools.classifiers.LLM_classifier import LLM_get_question_type
 from tools.generate_questions import LLM_generate_question, get_question_category
 from tools.feedback import calculate_score
@@ -218,3 +217,17 @@ async def q_type_categorize(question: Question):
     return {"question_type": q_type, "confidence": confidence}
 
 
+@app.post("/categorize-question-stage", tags=["Get Question Stage"])
+async def q_stage_categorize(question: Question):
+    """ 
+    Categorises a question into one of the 3 stage categories:
+        Introduction, Investigation stage, Closing stage
+
+    Args: 
+        question: Question to be classified.
+
+    Returns:
+        dict: Question stage and the confidence level of the classifier.
+    """
+    q_stage, confidence = get_stage(question.question)
+    return {"question_type": q_stage, "confidence": confidence}
