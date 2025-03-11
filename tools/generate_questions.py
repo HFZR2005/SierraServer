@@ -40,8 +40,7 @@ def LLM_generate_question(category: str) -> str:
             messages = [
                 {
                     "role": "user",
-                    "content":
-                    "You are the police interviewing a child about their abuse. Give only questions. Give me a " + category + " question. "
+                    "content": f"You are the police interviewing a child about their abuse. Give only questions. Give me a {category} question. "
                 }
             ]
         )
