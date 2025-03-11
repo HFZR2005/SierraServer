@@ -12,7 +12,7 @@ labels_qtype = {1: "Open-ended", 2: "Directive", 3: "Option Posing", 4: "Suggest
 labels_stage = {1: "Introduction", 2: "Investigation stage", 3: "Closing phase"}
     
 
-def get_question_type(question):
+def get_question_type(question) -> tuple[str, float]:
     encoding = tokenizer(question, return_tensors="pt", truncation=True, padding='max_length')
     with torch.no_grad():
         output = model_qtype(**encoding)
@@ -23,7 +23,7 @@ def get_question_type(question):
     return (labels_qtype[prediction], confidence)
 
 
-def get_stage(question):
+def get_stage(question) -> tuple[str, float]:
     encoding = tokenizer(question, return_tensors="pt", truncation=True, padding='max_length')
     with torch.no_grad():
         output = model_stage(**encoding)
