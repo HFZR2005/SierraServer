@@ -11,7 +11,7 @@ from tools.categorize_question import get_category
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
 from tools.classifiers.classifier import get_question_type
-from tools.classifiers.LLM_classifier import LLM_get_question_type
+from tools.classifiers.LLM_classifier import LLM_get_question_type, LLM_get_stage
 from tools.generate_questions import LLM_generate_question, get_question_category
 from tools.feedback import calculate_score
 from pydantic import BaseModel 
@@ -216,5 +216,20 @@ async def q_type_categorize(question: Question):
     """
     q_type, confidence = get_question_type(question.question)
     return {"question_type": q_type, "confidence": confidence}
+
+
+def categorise_stage(question: Question) -> Dict[str, str]:
+    """
+    Categorises a question into one of the stages:
+        Introduction, Investigative, Closing
+
+    Args:
+        question: Question to be classifed into a stage.
+
+    Returns:
+        dict: Stage
+    """
+    return {"stage": LLM_get_stage(question.question)}
+
 
 
