@@ -60,7 +60,7 @@ def LLM_get_stage(question: str) -> str:
 
                                     1. Introduction (Rapport building, asking general questions not related to the event and establishing the interview process.)
                                     2. Investigative (Asking questions about the event that took place)
-                                    3. Closing (Exiting the interview.)
+                                    3. Closing (Exiting the interview. Rapport building about the future, end-of-interview processes))
 
                                     Respond with only the stage.
 

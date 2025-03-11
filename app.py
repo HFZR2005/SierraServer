@@ -220,10 +220,10 @@ async def q_type_categorize(question: Question):
     q_type, confidence = get_question_type(question.question)
     return {"question_type": q_type, "confidence": confidence}
 
-
+@app.post("/categorise-stage", tags=["Get Question Stage"])
 def categorise_stage(question: Question) -> Dict[str, str]:
     """
-    Categorises a question into one of the stages:
+    Categorises a question into one of the stages using an LLM (backup for trained classifier):
         Introduction, Investigative, Closing
 
     Args:
