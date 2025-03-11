@@ -1,11 +1,7 @@
-
-from typing import List, Dict, Union
-
-import random
+from typing import List, Dict 
 import redis
 import uuid
-from numpy import float64
-from fastapi import FastAPI, Response, Request, Depends
+from fastapi import FastAPI, Response, Request 
 from fastapi.middleware.cors import CORSMiddleware
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
