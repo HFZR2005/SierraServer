@@ -158,8 +158,6 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
         history = redis_client.get(session_id)
         if not history:
             history = ""
-        else:
-            history = history.decode("utf-8")
         response = get_child_response(scenario, history, message.message)
 
         updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
@@ -186,7 +184,7 @@ async def llm_categorize_question(question: Question) -> Dict[str, str]:
 
 
 @app.post("/live-feedback", tags=["Live Feedback"])
-async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, Union[str, int, bool]]: 
+async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, tuple[str, float] | bool]: 
     """
     Generates feedback on questions asked by the user in the testing section. Includes whether
     the question is the correct type, the correct stage, and that there has been no context jump.
@@ -197,8 +195,14 @@ async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, Union[st
     Returns:
         dict: Question type, stage and whether a switch in context has been detected.
     """
+    
+    Q1, A1, Q2 = messages["question_1"], messages["response"], messages["question_2"] 
+    q_type = get_question_type(Q1) 
+    q_stage = get_stage(Q1)
+    context_switch_score = calculate_score([Q1, A1, Q2]) 
+    context_switch = context_switch_score < 0.3
 
-    return {"q_type": "T", "q_stage" : 1, "context_switch": False}
+    return {"q_type": q_type, "q_stage" : q_stage, "context_switch": context_switch}
 
 
 @app.post("/categorize-question", tags=["Get Question Type"])
