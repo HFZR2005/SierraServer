@@ -162,8 +162,8 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
         history = redis_client.get(session_id)
         if not history:
             history = ""
-        else:
-            history = history.decode("utf-8")
+        # else:
+            # history = history.decode("utf-8")
         response = get_child_response(scenario, history, message.message)
 
         updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"
