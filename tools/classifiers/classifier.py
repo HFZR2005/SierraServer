@@ -6,7 +6,7 @@ import torch
 path = 'tools/classifiers/q_type'
 model = BertForSequenceClassification.from_pretrained(path)
 tokenizer = AutoTokenizer.from_pretrained("bert-base-uncased")
-labels = {1: "Open-ended", 2: "Directive", 3: "Option Posing", 4: "Suggestive"}
+labels = {1: "Open-ended", 2: "Directive", 3: "Option Posing", 4: "Suggestive", 0: "Neither"}
     
 
 def get_question_type(question):
