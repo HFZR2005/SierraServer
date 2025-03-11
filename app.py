@@ -82,7 +82,7 @@ async def read_root() -> Dict[str, str]:
 
 
 @app.post("/end-stage-feedback", tags=["Give End-Stage Feedback"])
-async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, float]:
+async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[str, int]:
     """
     Provides feedback on user responses to questions.
     
@@ -90,7 +90,7 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
         responses (dict): A dictionary containing a list of question-response pairs.
     
     Returns:
-        dict: A message with feedback and a randomly assigned correctness status.
+        dict: A score indicating the quality of the responses. 
     """
     # have QAQAQAQA 
     QAQList = []
@@ -102,6 +102,8 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
             QAQList.append(pair.response)
 
     score = float(calculate_score(QAQList))
+
+    score = int(10 * score)
     return {"score": score}
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
