@@ -93,20 +93,19 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
         dict: A score indicating the quality of the responses. 
     """
     # have QAQAQAQA 
-    ''' QAQList = []
+    QAQList = []
     for i, pair in enumerate(responses["responses"]):
         if i == len(responses["responses"]) - 1:
             QAQList.append(pair.question)
         else:
             QAQList.append(pair.question)
             QAQList.append(pair.response)
-
+    print(QAQList)
     score = float(calculate_score(QAQList))
 
     score = int(10 * score)
     return {"score": score}
-    '''
-    return {"score": 6}
+    
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
 async def generate_scenario() -> Dict[str, str]:
