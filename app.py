@@ -94,6 +94,7 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
     """
     # have QAQAQAQA 
     QAQList = []
+    print(responses["responses"])
     for i, pair in enumerate(responses["responses"]):
         if i == len(responses["responses"]) - 1:
             QAQList.append(pair.question)
@@ -103,7 +104,7 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
     print(QAQList)
     score = float(calculate_score(QAQList))
 
-    score = int(10 * score)
+    # score = int(10 * score)
     return {"score": score}
     
 
@@ -189,7 +190,7 @@ async def llm_categorize_question(question: Question) -> Dict[str, str]:
 
 
 @app.post("/live-feedback", tags=["Live Feedback"])
-async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, tuple[str, float] | bool]: 
+async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, tuple[str, float] | bool | int | float]: 
     """
     Generates feedback on questions asked by the user in the testing section. Includes whether
     the question is the correct type, the correct stage, and that there has been no context jump.
@@ -202,12 +203,18 @@ async def generate_test_feedback(messages: Dict[str, str]) -> Dict[str, tuple[st
     """
     
     Q1, A1, Q2 = messages["question_1"], messages["response"], messages["question_2"] 
-    q_type = get_question_type(Q1) 
-    q_stage = get_stage(Q1)
+    q_type = get_question_type(Q2) 
+    # made get_stage return a dict
+    q_stage = get_stage(Q2)["stage"]
+    q_stage_confidence = get_stage(Q2)["confidence"]
+    print(Q2 + " is " + q_stage + " with confidence " + str(q_stage_confidence))
+    # made the request return a number to match frontend API
+    stage_indicies = {"Introduction" : 1, "Investigation stage": 2, "Closing phase": 3}
     context_switch_score = calculate_score([Q1, A1, Q2]) 
     context_switch = context_switch_score < 0.3
 
-    return {"q_type": q_type, "q_stage" : q_stage, "context_switch": context_switch}
+    return {"q_type": q_type, "q_stage" : stage_indicies[q_stage], "context_switch": context_switch,
+             "stage_confidence": q_stage_confidence}
 
 
 @app.post("/categorize-question", tags=["Get Question Type"])

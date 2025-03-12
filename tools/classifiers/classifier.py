@@ -31,4 +31,4 @@ def get_stage(question) -> tuple[str, float]:
     probabilities = torch.nn.functional.softmax(logits, dim=-1)
     prediction = torch.argmax(probabilities, dim=-1).item()
     confidence = probabilities[0, prediction].item()
-    return (labels_stage[prediction], confidence)
+    return {"stage": labels_stage[prediction], "confidence": confidence}
