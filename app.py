@@ -91,9 +91,6 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
     # have QAQAQAQA 
     QAQList = []
     for i, pair in enumerate(responses["responses"]):
-        if i == len(responses["responses"]) - 1:
-            QAQList.append(pair.question)
-        else:
             QAQList.append(pair.question)
             QAQList.append(pair.response)
 

@@ -8,6 +8,7 @@ __pycache__/
 *.pid
 *.log
 *.out
+*.sh
 tools/classifiers/q_type/*
 tools/classifiers/stage/*
 tools/classifiers/classifier.py*
