@@ -24,7 +24,7 @@ def LLM_get_question_type(question: str) -> str:
             messages = [
                 {
                     "role": "user",
-                    "content": f"""Categorise the question "{question}" into one of the categories. Respond with only the category.
+                    "content": f"""Categorise the question "{question}" into one of the categories.
                                 Open-ended (A question that encourages an open answer and cannot be answered by yes or no. Sometimes starts with who, what, when, where, or how such as in 'What happened?')
                                 Directive (A 'Who, What, When, Where, or How' question on a specific topic the question should suggest a short specific answer. )
                                 Option-Posing (A multiple choice question (this also includes yes/no questions) where the answer is part of the question but is not implied your question should not suggest anything.)
@@ -34,12 +34,14 @@ def LLM_get_question_type(question: str) -> str:
             ]
         )
 
-        return chat_response.choices[0].message.content.split(" ", 1)
+        return chat_response.choices[0].message.content
 
     except Exception as e:
         print(f"Error calling Mistral API: {e}")
         return "MistralAI API call error."
-    
+
+
+
 def LLM_get_stage(question: str) -> str:
     """
     Makes Mistral AI API call to classify a question into an interview stage.
@@ -58,9 +60,10 @@ def LLM_get_stage(question: str) -> str:
                     "role": "user",
                     "content": f"""You receive questions from a police interview and classify them into one of the following stages:
 
-                                    1. Introduction (Rapport building, asking general questions not related to the event and establishing the interview process.)
-                                    2. Investigative (Asking questions about the event that took place)
-                                    3. Closing (Exiting the interview. Rapport building about the future, end-of-interview processes))
+                                    
+Introduction (Rapport building, asking general questions not related to the event and establishing the interview process.)
+Investigative (Asking questions about the event that took place)
+Closing (Exiting the interview. Rapport building about the future, end-of-interview processes))
 
                                     Respond with only the stage.
 

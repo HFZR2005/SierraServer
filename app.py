@@ -1,11 +1,7 @@
-
-from typing import List, Dict, Union
-
-import random
+from typing import List, Dict 
 import redis
 import uuid
-from numpy import float64
-from fastapi import FastAPI, Response, Request, Depends
+from fastapi import FastAPI, Response, Request 
 from fastapi.middleware.cors import CORSMiddleware
 from tools.scenario import create_scenario
 from tools.conversational_child import get_child_response
@@ -96,15 +92,11 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
     QAQList = []
     print(responses["responses"])
     for i, pair in enumerate(responses["responses"]):
-        if i == len(responses["responses"]) - 1:
-            QAQList.append(pair.question)
-        else:
             QAQList.append(pair.question)
             QAQList.append(pair.response)
     print(QAQList)
     score = float(calculate_score(QAQList))
-
-    # score = int(10 * score)
+    score = min(10, int(10 * score))
     return {"score": score}
     
 
@@ -160,10 +152,6 @@ async def chat(request: Request, message: ChatRequest) -> Dict[str, str]:
 
         scenario = message.scenario
         history = redis_client.get(session_id)
-        if not history:
-            history = ""
-        # else:
-            # history = history.decode("utf-8")
         response = get_child_response(scenario, history, message.message)
 
         updated_history = f"{history}\n Interviewer: {message.message}\n You: {response}"

@@ -25,7 +25,7 @@ class InvalidQAQError(Exception):
         super().__init__(message)
 
 
-def calculate_similarity(QAQ: List[str]) -> float:
+def calculate_similarity(QAQ: List[str]) -> float64:
     if len(QAQ) == 3:
         q1, a, q2 = QAQ
         q1_embedding = sentence_model.encode(q1)
@@ -37,26 +37,28 @@ def calculate_similarity(QAQ: List[str]) -> float:
         score = max(1, (1 - distance.cosine(q1_embedding, q2_embedding)) / THRESHOLD)
         if score < 0.2:
             score = max(1, (1 - distance.cosine(a_embedding, q2_embedding)) / THRESHOLD)
-        return float(score)
+        return float64(score)
     else:
-        raise InvalidQAQError("QAQ list must be of length 3")
+        q1, a = QAQ 
+        q1_embedding = sentence_model.encode(q1) 
+        a_embedding = sentence_model.encode(a)
+        score = max(1, (1 - distance.cosine(q1_embedding, a_embedding)) / THRESHOLD)
+        return float64(score)
 
-
-def calculate_score(QResponseList: List[str]) -> float:
-    if len(QResponseList) < 3:
-        raise InvalidQAQError("QAQ list must be of length 3")
-    else: 
-        total = 0
-        count = 0
-
-        for i in range(2, len(QResponseList)):
+def calculate_score(QResponseList: List[str]) -> float64:
+    total = 0
+    count = 0
+   
+    if len(QResponseList) >= 3:
+        for i in range(2, len(QResponseList)-1):
             QAQ = [QResponseList[i-2], QResponseList[i-1], QResponseList[i]]
             score = calculate_similarity(QAQ)
             total += score 
             count += 1
-        
-        mean = total/count 
-        return float(mean) 
+    else:
+        score = calculate_similarity(QResponseList)
+        total += score 
+        count += 1
 
-
-
+    mean = total/count 
+    return float64(mean) 
