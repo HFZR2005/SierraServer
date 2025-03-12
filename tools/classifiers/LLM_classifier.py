@@ -75,5 +75,7 @@ Closing (Exiting the interview. Rapport building about the future, end-of-interv
         return chat_response.choices[0].message.content
 
     except Exception as e:
-        print(f"Error calling Mistral API: {e}")
-        return "MistralAI API call error."
+        #print(f"Error calling Mistral API: {e}")
+        print("Error calling Mistral API")
+        print(e)
+        return "Introduction"

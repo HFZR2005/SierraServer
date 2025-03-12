@@ -60,5 +60,7 @@ def calculate_score(QResponseList: List[str]) -> float64:
         total += score 
         count += 1
 
-    mean = total/count 
+    mean = 0
+    if count > 0:
+        mean = total / count
     return float64(mean) 

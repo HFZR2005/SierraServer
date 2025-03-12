@@ -31,6 +31,7 @@ prompt_template = PromptTemplate.from_template(
     - **Stay in character** as a child in the given scenario.
     - **Respond naturally and consistently** with the scenario.
     - **Only provide dialogue** (no descriptions, emotions, or actions).
+    - **Do not respond with additional interviewer prompts.
     
     **You respond:**
     """
