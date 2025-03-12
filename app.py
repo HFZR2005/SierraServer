@@ -98,8 +98,7 @@ async def give_feedback(responses: Dict[str, List[QuestionResponse]]) -> Dict[st
             QAQList.append(pair.response)
 
     score = float(calculate_score(QAQList))
-
-    score = int(10 * score)
+    score = min(10, int(10 * score))
     return {"score": score}
 
 @app.get("/generate-scenario", tags=["Generate Scenario"])
