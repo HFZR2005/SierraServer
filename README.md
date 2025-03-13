@@ -1,9 +1,6 @@
 # SierraServer
 
 
-# Project Contribution Guide
-
-
 ## Getting Started
 ### Prerequisites
 Ensure you have the following installed:
@@ -14,9 +11,16 @@ Ensure you have the following installed:
 ### Installation
 Clone the repository and install dependencies:
 ```bash
-git clone git@github.com:HFZR2005/SierraServer.git
+git clone https://github.com/HFZR2005/SierraServer.git
 cd SierraServer
 pip install -r requirements.txt
+```
+
+Download the `tools` folder for the classifier model files from:
+(https://drive.google.com/drive/u/0/folders/1Fa53W6K1AQ1J_PDEHoF7VsPQZUoEUooa)
+```bash
+unzip tools.zip -d tools
+mv tools/* ./tools 
 ```
 
 Install PyTorch manually (depending on CPU or GPU):
@@ -54,16 +58,17 @@ echo "MISTRAL_API_KEY=your_api_key_here" > .env
 ## Project Structure
 ```
 .
+├── app.py                         # Main FastAPI application
+├── .gitattributes
+├── .gitignore
+├── main.py                        # Entry point 
 ├── README.md
-├── app.py                 # Main FastAPI application
-├── main.py                # Entry point 
-├── requirements.txt       # Project dependencies
-├── start_uvicorn.sh       # Bash script to start the server in the background
-└── tools                  # Modular tool files
-    ├── __init__.py        # Makes tools a package
-    ├── categorize_question.py
-    ├── conversational_child.py
-    └── scenario.py
+├── requirements.txt               # Project dependencies
+├── start_uvicorn.sh               # Bash script to start the server in the background
+├── tests
+│   ├── __init__py
+│   └── test_similarity.py
+└── tools                          # Modular tool files FROM GDRIVE LINK
 ```
 
 ## Contributing
